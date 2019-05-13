@@ -7,7 +7,6 @@ class Scrapper:
     def fetch(self, url):
         pass
 
-
     @abstractmethod
     def transform(self, soup):
         pass

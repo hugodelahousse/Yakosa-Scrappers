@@ -14,7 +14,7 @@ class Promotion:
     def __str__(self):
         return f'Store: {self.store_name} / Product name: {self.name} / Product price: {self.price} / Promotion: {self.promotion}'
 
-    def convertToPromotion(self, url, user_id):
+    def convertToPromotion(self, url):
         brand_id = brand_by_name_get(url + "brands/" + self.store_name)
         if brand_id is not None:
             brand_id = brand_id["id"]
@@ -24,7 +24,7 @@ class Promotion:
         else:
             return None
         type = self.type if self.type < 3 else 3
-        return MetaPromotion("", self.beginDate, self.endDate, user_id, None, brand_id, product, self.price,
+        return MetaPromotion("", self.beginDate, self.endDate, None, None, brand_id, product, self.price,
                              self.promotion, type)
 
 
