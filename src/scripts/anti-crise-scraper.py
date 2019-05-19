@@ -3,7 +3,7 @@ from bs4 import BeautifulSoup
 from datetime import timedelta
 from src.models.Promotion import Promotion
 from src.scripts.utils import simple_get, promotion_post
-from src.scripts.scrapper import Scrapper
+from src.scripts.scraper import Scrapper
 from src.scripts.config import API_URL, HISTORY_FILE
 
 
