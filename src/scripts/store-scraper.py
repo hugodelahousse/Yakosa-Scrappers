@@ -1,9 +1,13 @@
+import json
+
 import unidecode as unidecode
 from bs4 import BeautifulSoup
 from datetime import timedelta
-from src.scripts.utils import simple_get
+
+from src.scripts.config import HISTORY_FILE, STORE_FILE, META_STORE_FILE
+from src.scripts.utils import simple_get, position_get
 from src.scripts.scraper import Scrapper
-from src.models.Store import Store
+from src.models.Store import Store, MetaStore
 
 brands = {
     'Atac',
@@ -46,7 +50,7 @@ def raw_brand_to_brand(raw_brand):
 def store_div_to_store(store_div):
     brand = store_div.find('b').contents[0]
     location = store_div.find_all('br')
-    address = str(location[2].next)
+    address = unidecode.unidecode(str(location[2].next))
     postal_code = str(location[3].next).split()[0]
     return Store(raw_brand_to_brand(brand), address, postal_code)
 
@@ -103,7 +107,16 @@ class StoreScraper(Scrapper):
         stores = []
         for store_div in soup:
             stores.append(store_div_to_store(store_div))
-        return stores
+        stores = list(dict.fromkeys(stores))
+        with open(STORE_FILE, "w") as file:
+            file.write(json.dumps([store.__dict__ for store in stores]))
+        meta_stores = []
+        for store in stores:
+            address = store.address.replace(' ', '+')
+            geo = position_get('https://api-adresse.data.gouv.fr/search/', address, store.postal_code)
+            if geo and len(geo["features"]):
+                meta_stores.append(MetaStore(store.brand, geo["features"][0]))
+        return meta_stores
 
     def frequency(self, time):
         self.time = time
@@ -111,6 +124,8 @@ class StoreScraper(Scrapper):
     def run(self):
         soup = self.fetch(None)
         stores = self.transform(soup)
+        with open(META_STORE_FILE, "w") as file:
+            file.write(json.dumps([store.__dict__ for store in stores]))
         tmp = 2
         '''
         promotions = self.transform(soup)
@@ -121,6 +136,4 @@ class StoreScraper(Scrapper):
 
 if __name__ == "__main__":
     scraper = StoreScraper()
-    soup = scraper.fetch(None)
-    stores = scraper.transform(soup)
-    tmp = 2
+    scraper.run()
