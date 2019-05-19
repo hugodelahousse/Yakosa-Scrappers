@@ -60,3 +60,15 @@ def promotion_post(url, promotion):
     except RequestException as e:
         logging.exception("product_by_name_get")
         return None
+
+
+def position_get(url, address, postal_code):
+    try:
+        with closing(requests.get(url, params={'q': address, 'postcode': postal_code})) as resp:
+            if resp.status_code == 200:
+                return json.loads(resp.content)
+            else:
+                return None
+    except RequestException as e:
+        logging.exception("position_get")
+        return None
