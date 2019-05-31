@@ -10,6 +10,7 @@ celery = "*"
 requests = "*"
 beautifulsoup4 = "*"
 unidecode = "*"
+pyyaml = "*"
 
 [requires]
 python_version = "3.7"
