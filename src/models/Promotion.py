@@ -1,12 +1,13 @@
-from utils import brand_by_name_get, product_by_name_get
+import unidecode as unidecode
+from utils import brand_by_name_get, product_by_name_get, raw_brand_to_formated_brand
 
 
 class Promotion:
     def __init__(self, store_name, begin_date, end_date, name, price, promo, type):
-        self.store_name = store_name
+        self.store_name = raw_brand_to_formated_brand(store_name)
         self.beginDate = begin_date
         self.endDate = end_date
-        self.name = name
+        self.name = unidecode.unidecode(name)
         self.price = float(price.replace(",", ".")) if "," in price else float(price)
         self.promotion = float(promo.replace(",", ".")) if "," in promo else float(promo)
         self.type = int(type)
