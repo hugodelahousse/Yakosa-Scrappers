@@ -1,10 +1,12 @@
 import datetime
+
+import yaml
 from bs4 import BeautifulSoup
 from datetime import timedelta
 from src.models.Promotion import Promotion
 from src.scripts.utils import simple_get, promotion_post
 from src.scripts.scraper import Scrapper
-from src.scripts.config import API_URL, HISTORY_FILE
+from src.scripts.config import API_URL, HISTORY_FILE, META_PROMOTION_FILE_YML
 
 
 class AntiCriseScrapper(Scrapper):
@@ -29,6 +31,8 @@ class AntiCriseScrapper(Scrapper):
         position = {'PRODUIT': None, 'Q': None, 'PRIX': None, 'PROMO': None}
 
         for i in range(len(cases)):
+            if cases[i].string is None:
+                continue
             if 'PRODUIT' in cases[i].string:
                 position['PRODUIT'] = i
             elif 'Q' in cases[i].string:
@@ -48,13 +52,14 @@ class AntiCriseScrapper(Scrapper):
 
         for promotion_data in promotion_array:
             cell = promotion_data.find_all("td")
-            product_name = cell[position['PRODUIT']].string
+            product_name = str(cell[position['PRODUIT']].next.string)
             product_price = cell[position['PRIX']].string.replace("€", "")
             product_promo = cell[position['PROMO']].string.replace("€", "")
             product_quantity = cell[position['Q']].string
             promotion = Promotion(store_name, begin_date, end_date, product_name, product_price, product_promo,
                                   product_quantity)
-            scraped_promotions.append(promotion)
+            if product_promo not in '0,00':
+                scraped_promotions.append(promotion)
 
         return scraped_promotions
 
@@ -97,8 +102,7 @@ class AntiCriseScrapper(Scrapper):
                 if converted is not None:
                     products.append(converted)
 
-        tmp = list(dict.fromkeys(products))
-        return tmp
+        return list(dict.fromkeys(products))
 
     def frequency(self, time):
         self.time = time
@@ -108,3 +112,19 @@ class AntiCriseScrapper(Scrapper):
         promotions = self.transform(soup)
         for promotion in promotions:
             promotion_post(API_URL + 'promotions', promotion)
+
+    def export(self, data, path):
+        with open(path, 'w') as file:
+            final_data = dict()
+            for i in range(len(data)):
+                final_data[f'promotion{i + 1}'] = data[i].__dict__
+            yaml.dump({'items': final_data}, file)
+
+
+if __name__ == "__main__":
+    print('START')
+    scraper = AntiCriseScrapper()
+    soup = scraper.fetch(None)
+    data = scraper.transform(soup)
+    scraper.export(data, META_PROMOTION_FILE_YML)
+    print('FINISH')
