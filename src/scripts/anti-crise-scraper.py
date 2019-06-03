@@ -124,7 +124,5 @@ class AntiCriseScrapper(Scrapper):
 if __name__ == "__main__":
     print('START')
     scraper = AntiCriseScrapper()
-    soup = scraper.fetch(None)
-    data = scraper.transform(soup)
-    scraper.export(data, META_PROMOTION_FILE_YML)
+    scraper.run()
     print('FINISH')
