@@ -3,7 +3,7 @@ from bs4 import BeautifulSoup
 from datetime import timedelta
 
 from src.scripts.config import META_STORE_FILE_YML, API_URL
-from src.scripts.utils import simple_get, position_get, raw_brand_to_brand, store_post, raw_brand_to_formated_brand, \
+from src.scripts.utils import simple_get, position_get, store_post, raw_brand_to_formated_brand, \
     brands
 from src.scripts.scraper import Scrapper
 import unidecode as unidecode
@@ -114,6 +114,8 @@ class StoreScraper(Scrapper):
         with open(path, 'w') as file:
             final_data = dict()
             for i in range(len(data)):
+                data[i].brand = f'@brand{data[i].brandId}'
+                del data[i].brandId
                 final_data[f'store{i + 1}'] = data[i].__dict__
             yaml.dump({'items': final_data}, file)
 
