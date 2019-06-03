@@ -18,3 +18,7 @@ class Scrapper:
     @abstractmethod
     def run(self):
         pass
+
+    @abstractmethod
+    def export(self, data, path):
+        pass

@@ -1,5 +1,4 @@
 import yaml
-
 from bs4 import BeautifulSoup
 from datetime import timedelta
 
@@ -107,16 +106,19 @@ class StoreScraper(Scrapper):
 
     def run(self):
         soup = self.fetch(None)
-        stores = self.transform(soup)
-        with open(META_STORE_FILE_YML, 'w') as file:
-            final_stores = dict()
-            for i in range(len(stores)):
-                final_stores[f'store{i + 1}'] = stores[i].__dict__
-            yaml.dump({'items': final_stores}, file)
+        return self.transform(soup)
+
+    def export(self, data, path):
+        with open(path, 'w') as file:
+            final_data = dict()
+            for i in range(len(data)):
+                final_data[f'store{i + 1}'] = data[i].__dict__
+            yaml.dump({'items': final_data}, file)
 
 
 if __name__ == "__main__":
     print('START')
     scraper = StoreScraper()
-    scraper.run()
+    data = scraper.run()
+    scraper.export(data, META_STORE_FILE_YML)
     print('FINISH')

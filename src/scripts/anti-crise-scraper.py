@@ -1,10 +1,12 @@
 import datetime
+
+import yaml
 from bs4 import BeautifulSoup
 from datetime import timedelta
 from src.models.Promotion import Promotion
 from src.scripts.utils import simple_get, promotion_post
 from src.scripts.scraper import Scrapper
-from src.scripts.config import API_URL, HISTORY_FILE
+from src.scripts.config import API_URL, HISTORY_FILE, META_PROMOTION_FILE_YML
 
 
 class AntiCriseScrapper(Scrapper):
@@ -111,9 +113,18 @@ class AntiCriseScrapper(Scrapper):
         for promotion in promotions:
             promotion_post(API_URL + 'promotions', promotion)
 
+    def export(self, data, path):
+        with open(path, 'w') as file:
+            final_data = dict()
+            for i in range(len(data)):
+                final_data[f'promotion{i + 1}'] = data[i].__dict__
+            yaml.dump({'items': final_data}, file)
+
 
 if __name__ == "__main__":
     print('START')
     scraper = AntiCriseScrapper()
-    scraper.run()
+    soup = scraper.fetch(None)
+    data = scraper.transform(soup)
+    scraper.export(data, META_PROMOTION_FILE_YML)
     print('FINISH')

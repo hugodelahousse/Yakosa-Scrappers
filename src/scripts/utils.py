@@ -1,6 +1,7 @@
 import json
 import logging
 
+import yaml
 from requests.exceptions import RequestException
 from contextlib import closing
 import unidecode as unidecode
@@ -107,6 +108,10 @@ brands = {
     'Aldi': 29,
     'Match': 30,
     'Netto': 31,
+    'Auchan': 32,
+    'Auchan Supermarche': 33,
+    'Hyper U': 34,
+    'Casino': 35,
 }
 
 
@@ -122,3 +127,8 @@ def raw_brand_to_formated_brand(raw_brand):
         if brand.lower() in unidecode.unidecode(raw_brand.lower()):
             return brand
     raise ValueError(f'Any brand is matching {raw_brand}')
+
+
+def export(data, path):
+    with open(path, 'w') as file:
+        yaml.dump(data, file)
