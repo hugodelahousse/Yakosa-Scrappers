@@ -52,18 +52,6 @@ def product_by_name_get(url):
         return None
 
 
-def promotion_post(url, promotion):
-    try:
-        with closing(requests.post(url, json=promotion.__dict__)) as resp:
-            if resp.status_code == 201:
-                return json.loads(resp.content)
-            else:
-                return None
-    except RequestException as e:
-        logging.exception("product_by_name_get")
-        return None
-
-
 def position_get(url, address, postal_code):
     try:
         with closing(requests.get(url, params={'q': address, 'postcode': postal_code})) as resp:
@@ -73,6 +61,42 @@ def position_get(url, address, postal_code):
                 return None
     except RequestException as e:
         logging.exception("position_get")
+        return None
+
+
+def promotion_post(url, promotion):
+    try:
+        with closing(requests.post(url, json=promotion.__dict__)) as resp:
+            if resp.status_code == 201:
+                return json.loads(resp.content)
+            else:
+                return None
+    except RequestException as e:
+        logging.exception("product_post")
+        return None
+
+
+def brand_post(url, brand):
+    try:
+        with closing(requests.post(url, json=brand.__dict__)) as resp:
+            if resp.status_code == 201:
+                return json.loads(resp.content)
+            else:
+                return None
+    except RequestException as e:
+        logging.exception("promotion_post")
+        return None
+
+
+def store_post(url, store):
+    try:
+        with closing(requests.post(url, json=store.__dict__)) as resp:
+            if resp.status_code == 201:
+                return json.loads(resp.content)
+            else:
+                return None
+    except RequestException as e:
+        logging.exception("store_post")
         return None
 
 

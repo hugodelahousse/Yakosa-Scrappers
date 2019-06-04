@@ -2,8 +2,9 @@ import yaml
 from bs4 import BeautifulSoup
 from datetime import timedelta
 
-from src.scripts.config import META_STORE_FILE_YML
-from src.scripts.utils import simple_get, position_get, raw_brand_to_brand
+from src.scripts.config import META_STORE_FILE_YML, API_URL
+from src.scripts.utils import simple_get, position_get, store_post, raw_brand_to_formated_brand, \
+    brands
 from src.scripts.scraper import Scrapper
 import unidecode as unidecode
 from src.models.Store import Store, MetaStore
@@ -15,7 +16,8 @@ def store_div_to_store(store_div):
         location = store_div.find_all('br')
         address = unidecode.unidecode(str(location[2].next))
         postal_code = str(location[3].next).split()[0]
-        return Store(raw_brand_to_brand(brand), address, postal_code)
+        formated_brand = raw_brand_to_formated_brand(brand)
+        return Store(brands[formated_brand], address, postal_code)
     except:
         return None
 
@@ -94,11 +96,10 @@ class StoreScraper(Scrapper):
         stores = list(dict.fromkeys(stores))
         meta_stores = []
         for store in stores:
-            print(store)
             address = store.address.replace(' ', '+')
             geo = position_get('https://api-adresse.data.gouv.fr/search/', address, store.postal_code)
             if geo and len(geo["features"]):
-                meta_stores.append(MetaStore(store.brand, geo["features"][0]))
+                meta_stores.append(MetaStore(store.brandId, geo["features"][0]))
         return meta_stores
 
     def frequency(self, time):
@@ -106,12 +107,15 @@ class StoreScraper(Scrapper):
 
     def run(self):
         soup = self.fetch(None)
-        return self.transform(soup)
+        for store in self.transform(soup):
+            store_post(API_URL + 'stores', store)
 
     def export(self, data, path):
         with open(path, 'w') as file:
             final_data = dict()
             for i in range(len(data)):
+                data[i].brand = f'@brand{data[i].brandId}'
+                del data[i].brandId
                 final_data[f'store{i + 1}'] = data[i].__dict__
             yaml.dump({'items': final_data}, file)
 
@@ -119,6 +123,5 @@ class StoreScraper(Scrapper):
 if __name__ == "__main__":
     print('START')
     scraper = StoreScraper()
-    data = scraper.run()
-    scraper.export(data, META_STORE_FILE_YML)
+    scraper.run()
     print('FINISH')
