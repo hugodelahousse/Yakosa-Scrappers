@@ -1,5 +1,5 @@
 import unidecode as unidecode
-from utils import brand_by_name_get, product_by_name_get, raw_brand_to_formated_brand
+from .utils import brand_by_name_get, product_by_name_get, raw_brand_to_formated_brand
 
 
 class Promotion:

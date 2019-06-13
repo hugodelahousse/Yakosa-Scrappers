@@ -3,10 +3,11 @@ import datetime
 import yaml
 from bs4 import BeautifulSoup
 from datetime import timedelta
-from src.models.Promotion import Promotion
-from src.scripts.utils import simple_get, promotion_post
-from src.scripts.scraper import Scrapper
-from src.scripts.config import API_URL, HISTORY_FILE, META_PROMOTION_FILE_YML
+from utils import simple_get, promotion_post
+from scraper import Scrapper
+from config import API_URL, HISTORY_FILE
+
+from models.promotion import Promotion
 
 
 class AntiCriseScrapper(Scrapper):
@@ -92,7 +93,7 @@ class AntiCriseScrapper(Scrapper):
         return newspapers_brand
 
     def transform(self, soup):
-        products = []
+        products = set()
 
         for element in soup:
             page = BeautifulSoup(simple_get(element['url']), 'html.parser')
@@ -100,9 +101,9 @@ class AntiCriseScrapper(Scrapper):
             for scraped_promotion in promotions:
                 converted = scraped_promotion.convertToPromotion(API_URL)
                 if converted is not None:
-                    products.append(converted)
+                    products.add(converted)
 
-        return list(dict.fromkeys(products))
+        return products
 
     def frequency(self, time):
         self.time = time
