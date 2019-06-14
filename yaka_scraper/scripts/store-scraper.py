@@ -1,13 +1,14 @@
 import yaml
 from bs4 import BeautifulSoup
 from datetime import timedelta
-
-from src.scripts.config import META_STORE_FILE_YML, API_URL
-from src.scripts.utils import simple_get, position_get, store_post, raw_brand_to_formated_brand, \
-    brands
-from src.scripts.scraper import Scrapper
 import unidecode as unidecode
-from src.models.Store import Store, MetaStore
+
+from config import API_URL
+from utils import simple_get, position_get, store_post
+from scraper import Scrapper
+
+from models.store import Store, MetaStore
+from models.utils import raw_brand_to_formated_brand, brands
 
 
 def store_div_to_store(store_div):
@@ -76,7 +77,7 @@ class StoreScraper(Scrapper):
     def fetch(self, url):
         print('FETCH')
         # In order to scrapp only paris put this :
-        # 'https://supermarches.grandes-enseignes.com/75-ville-de-paris/75100-paris.php' is the cities' array
+        # 'https://supermarches.grandes-enseignes.com/91-essonne/91648-vert-le-grand.php' is the cities' array
         cities = []
         for department in get_departments(self.url):
             for city in get_cities(f'{self.url}{department}'):
