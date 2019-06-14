@@ -7,10 +7,12 @@ from requests.exceptions import RequestException
 from contextlib import closing
 import requests
 
+JWT_TOKEN = os.getenv('JWT_TOKEN')
+
 
 def brand_by_name_get(url):
     try:
-        with closing(requests.get(url, headers={'Authorization': f"access_token {os.getenv('JWT_TOKEN')}"})) as resp:
+        with closing(requests.get(url, headers={'Authorization': f"access_token {JWT_TOKEN}"})) as resp:
             if resp.status_code == 200:
                 return json.loads(resp.content)
             else:
@@ -22,7 +24,7 @@ def brand_by_name_get(url):
 
 def product_by_name_get(url):
     try:
-        with closing(requests.get(url, headers={'Authorization': f"access_token {os.getenv('JWT_TOKEN')}"})) as resp:
+        with closing(requests.get(url, headers={'Authorization': f"access_token {JWT_TOKEN}"})) as resp:
             if resp.status_code == 200:
                 return json.loads(resp.content)
             else:
