@@ -9,7 +9,7 @@ from models.utils import brands
 from models.brand import MetaBrand
 
 
-class StoreScraper(Scrapper):
+class BrandScraper(Scrapper):
     time = timedelta(days=1)
 
     def fetch(self, url):
@@ -40,6 +40,6 @@ class StoreScraper(Scrapper):
 
 if __name__ == "__main__":
     print('START')
-    scraper = StoreScraper()
+    scraper = BrandScraper()
     scraper.run()
     print('FINISH')
