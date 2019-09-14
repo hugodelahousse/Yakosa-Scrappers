@@ -93,17 +93,17 @@ class AntiCriseScrapper(Scrapper):
         return newspapers_brand
 
     def transform(self, soup):
-        products = set()
+        meta_promotions = set()
 
         for element in soup:
             page = BeautifulSoup(simple_get(element['url']), 'html.parser')
             promotions = self.__extract_information(page, element['brand'], element['begin_date'], element['end_date'])
             for scraped_promotion in promotions:
-                converted = scraped_promotion.convertToPromotion(API_URL)
-                if converted is not None:
-                    products.add(converted)
+                meta_promotion = scraped_promotion.convertToPromotion(API_URL)
+                if meta_promotion is not None:
+                    meta_promotions.add(meta_promotion)
 
-        return products
+        return meta_promotions
 
     def frequency(self, time):
         self.time = time

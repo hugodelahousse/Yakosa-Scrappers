@@ -78,10 +78,10 @@ class StoreScraper(Scrapper):
         print('FETCH')
         # In order to scrapp only paris put this :
         # 'https://supermarches.grandes-enseignes.com/91-essonne/91648-vert-le-grand.php' is the cities' array
-        cities = []
+        cities = set()
         for department in get_departments(self.url):
             for city in get_cities(f'{self.url}{department}'):
-                cities.append(f'{self.url}{city}')
+                cities.add(f'{self.url}{city}')
         stores = []
         for city in cities:
             stores.extend(get_stores(city))
@@ -89,12 +89,11 @@ class StoreScraper(Scrapper):
 
     def transform(self, soup):
         print('TRANSFORM')
-        stores = []
+        stores = set()
         for store_div in soup:
             store = store_div_to_store(store_div)
             if store:
-                stores.append(store)
-        stores = list(dict.fromkeys(stores))
+                stores.add(store)
         meta_stores = []
         for store in stores:
             address = store.address.replace(' ', '+')
