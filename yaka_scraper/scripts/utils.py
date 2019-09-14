@@ -7,8 +7,7 @@ from requests.exceptions import RequestException
 from contextlib import closing
 import requests
 
-JWT_TOKEN = os.getenv('JWT_TOKEN')
-
+JWT_TOKEN = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhZG1pbiI6dHJ1ZSwidXNlcklkIjpudWxsfQ.WVD-oHmdYbMNPAcdyzBh07S8ZXyyXblAtrkCRKuvkfo"
 
 def is_good_response(resp):
     content_type = resp.headers['Content-Type'].lower()
@@ -85,3 +84,4 @@ def store_post(url, store):
 def export(data, path):
     with open(path, 'w') as file:
         yaml.dump(data, file)
+

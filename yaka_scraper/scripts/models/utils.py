@@ -7,8 +7,7 @@ from requests.exceptions import RequestException
 from contextlib import closing
 import requests
 
-JWT_TOKEN = os.getenv('JWT_TOKEN')
-
+JWT_TOKEN = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhZG1pbiI6dHJ1ZSwidXNlcklkIjpudWxsfQ.WVD-oHmdYbMNPAcdyzBh07S8ZXyyXblAtrkCRKuvkfo"
 
 def brand_by_name_get(url):
     try:
