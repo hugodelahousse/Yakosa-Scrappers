@@ -9,6 +9,7 @@ def remove_old_promotions():
     for promotion in promotions:
         end_date = parse(promotion['endDate'])
         if end_date.date() < datetime.now().date():
+            print(f'Delete promotion number: {promotion["id"]}')
             promotion_delete(API_URL + 'promotions/' + str(promotion['id']))
 
 
@@ -17,6 +18,7 @@ def remove_surplus_promotion():
     if len(promotions) > 3000:
         promotions_sorted = sorted(promotions, key=lambda promotion: parse(promotion['endDate']))
         for i in range(len(promotions) - 3000):
+            print(f'Delete promotion number: {promotions_sorted[i]["id"]}')
             promotion_delete(API_URL + 'promotions/' + str(promotions_sorted[i]['id']))
 
 
