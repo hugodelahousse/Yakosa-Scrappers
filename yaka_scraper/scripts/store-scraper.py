@@ -18,7 +18,7 @@ def store_div_to_store(store_div):
         address = unidecode.unidecode(str(location[2].next))
         postal_code = str(location[3].next).split()[0]
         formated_brand = raw_brand_to_formated_brand(brand)
-        return Store(brands[formated_brand], address, postal_code)
+        return Store(brands[formated_brand], address, postal_code, str(brand))
     except:
         return None
 
@@ -78,10 +78,12 @@ class StoreScraper(Scrapper):
         print('FETCH')
         # In order to scrapp only paris put this :
         # 'https://supermarches.grandes-enseignes.com/91-essonne/91648-vert-le-grand.php' is the cities' array
-        cities = set()
+        cities = ['https://supermarches.grandes-enseignes.com/94-val-de-marne/94043-le-kremlin-bicetre.php']
+        '''
         for department in get_departments(self.url):
             for city in get_cities(f'{self.url}{department}'):
                 cities.add(f'{self.url}{city}')
+        '''
         stores = []
         for city in cities:
             stores.extend(get_stores(city))
@@ -96,10 +98,10 @@ class StoreScraper(Scrapper):
                 stores.add(store)
         meta_stores = []
         for store in stores:
-            address = store.address.replace(' ', '+')
-            geo = position_get('https://api-adresse.data.gouv.fr/search/', address, store.postal_code)
+            custom_address = store.address.replace(' ', '+')
+            geo = position_get('https://api-adresse.data.gouv.fr/search/', custom_address, store.postal_code)
             if geo and len(geo["features"]):
-                meta_stores.append(MetaStore(store.brandId, geo["features"][0]))
+                meta_stores.append(MetaStore(store.brandId, geo["features"][0], store.address, store.name))
         return meta_stores
 
     def frequency(self, time):

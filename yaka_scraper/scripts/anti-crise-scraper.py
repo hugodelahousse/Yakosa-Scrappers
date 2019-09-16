@@ -59,7 +59,7 @@ class AntiCriseScrapper(Scrapper):
             product_quantity = cell[position['Q']].string
             promotion = Promotion(store_name, begin_date, end_date, product_name, product_price, product_promo,
                                   product_quantity)
-            if product_promo not in '0,00':
+            if product_promo not in '0,00' and product_price - product_promo >= 0:
                 scraped_promotions.append(promotion)
 
         return scraped_promotions
@@ -84,9 +84,9 @@ class AntiCriseScrapper(Scrapper):
                     begin_date = datetime.datetime.strptime(dates[0].strip(), '%d/%m/%Y').isoformat()
                     end_date = datetime.datetime.strptime(dates[1].strip(), '%d/%m/%Y').isoformat()
                     information = {'brand': brand_names[i], 'begin_date': begin_date, 'end_date': end_date}
-                    id = f"{information['brand']}-{information['begin_date']}-{information['end_date']}"
-                    if id not in history:
-                        file.write(id + '\n')
+                    url = newspaper.find(['class'] == 'info', href=True)['href']
+                    if url not in history:
+                        file.write(url + '\n')
                         information['url'] = newspaper.find("a", {"class": "info"})['href']
                         newspapers_brand.append(information)
 

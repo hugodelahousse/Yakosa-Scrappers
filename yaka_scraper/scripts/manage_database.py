@@ -8,7 +8,7 @@ def remove_old_promotions():
     promotions = promotion_get(API_URL + 'promotions')
     for promotion in promotions:
         end_date = parse(promotion['endDate'])
-        if end_date.date() < datetime.now().date():
+        if end_date.date() < datetime.now().date() or promotion['price'] - promotion['promotion'] < 0:
             print(f'Delete promotion number: {promotion["id"]}')
             promotion_delete(API_URL + 'promotions/' + str(promotion['id']))
 
