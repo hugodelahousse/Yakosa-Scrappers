@@ -54,12 +54,14 @@ class AntiCriseScrapper(Scrapper):
         for promotion_data in promotion_array:
             cell = promotion_data.find_all("td")
             product_name = str(cell[position['PRODUIT']].next.string)
-            product_price = cell[position['PRIX']].string.replace("€", "")
-            product_promo = cell[position['PROMO']].string.replace("€", "")
+            price_str = cell[position['PRIX']].string.replace("€", "")
+            product_price = float(price_str.replace(",", ".")) if "," in price_str else float(price_str)
+            promo_str = cell[position['PROMO']].string.replace("€", "")
+            product_promo = float(promo_str.replace(",", ".")) if "," in promo_str else float(promo_str)
             product_quantity = cell[position['Q']].string
             promotion = Promotion(store_name, begin_date, end_date, product_name, product_price, product_promo,
                                   product_quantity)
-            if product_promo not in '0,00' and product_price - product_promo >= 0:
+            if product_promo != 0 and product_price + product_promo >= 0:
                 scraped_promotions.append(promotion)
 
         return scraped_promotions
