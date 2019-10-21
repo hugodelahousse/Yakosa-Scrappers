@@ -6,11 +6,12 @@ verify_ssl = true
 [dev-packages]
 
 [packages]
-celery = "*"
 requests = "*"
 beautifulsoup4 = "*"
 unidecode = "*"
 pyyaml = "*"
+python-dateutil = "*"
+PyYAML = "*"
 
 [requires]
 python_version = "3.7"
