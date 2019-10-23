@@ -1,4 +1,5 @@
 import datetime
+import sentry_sdk
 
 import yaml
 from bs4 import BeautifulSoup
@@ -125,6 +126,7 @@ class AntiCriseScrapper(Scrapper):
 
 
 if __name__ == "__main__":
+    sentry_sdk.init("https://97da0dc50f574bf89ef1ee9f668f16ed@sentry.io/1794021")
     print('START')
     scraper = AntiCriseScrapper()
     scraper.run()

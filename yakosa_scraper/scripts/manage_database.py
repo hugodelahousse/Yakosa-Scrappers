@@ -1,3 +1,5 @@
+import sentry_sdk
+
 from utils import promotion_get, promotion_delete
 from config import API_URL
 from dateutil.parser import parse
@@ -23,6 +25,7 @@ def remove_surplus_promotion():
 
 
 if __name__ == "__main__":
+    sentry_sdk.init("https://97da0dc50f574bf89ef1ee9f668f16ed@sentry.io/1794021")
     print('START db management')
     remove_old_promotions()
     remove_surplus_promotion()

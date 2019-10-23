@@ -1,7 +1,9 @@
 import yaml
+import sentry_sdk
+import unidecode as unidecode
+
 from bs4 import BeautifulSoup
 from datetime import timedelta
-import unidecode as unidecode
 
 from config import API_URL
 from utils import simple_get, position_get, store_post
@@ -123,6 +125,7 @@ class StoreScraper(Scrapper):
 
 
 if __name__ == "__main__":
+    sentry_sdk.init("https://97da0dc50f574bf89ef1ee9f668f16ed@sentry.io/1794021")
     print('START')
     scraper = StoreScraper()
     scraper.run()
